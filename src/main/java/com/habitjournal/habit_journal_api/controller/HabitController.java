@@ -3,9 +3,12 @@ package com.habitjournal.habit_journal_api.controller;
 
 import com.habitjournal.habit_journal_api.controller.dto.HabitRequestDTO;
 import com.habitjournal.habit_journal_api.controller.dto.HabitResponseDTO;
+import com.habitjournal.habit_journal_api.controller.dto.resultDTO;
 import com.habitjournal.habit_journal_api.model.Habit;
 import com.habitjournal.habit_journal_api.service.HabitService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +23,20 @@ public class HabitController {
 
 
     @PostMapping
-    public void createNewHabit(@RequestBody HabitRequestDTO habitRequestDTO) {
-        habitService.createNewHabit(habitRequestDTO);
+    public ResponseEntity<HabitResponseDTO> createNewHabit(@Valid @RequestBody HabitRequestDTO habitRequestDTO) {
+        HabitResponseDTO  responde = habitService.createNewHabit(habitRequestDTO);
+        return new ResponseEntity<>(responde, HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<HabitResponseDTO>> findAllHabits() {
        List<HabitResponseDTO> habitResponseDTOS = habitService.findAllHabits();
        return ResponseEntity.ok().body(habitResponseDTOS);
+    }
+
+    @GetMapping("/substring/{data}")
+    public resultDTO getSubstring(@PathVariable String data) {
+        return habitService.getMaxLongToSubstring(data);
     }
 
 }
